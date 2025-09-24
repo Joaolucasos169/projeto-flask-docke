@@ -1,0 +1,16 @@
+<!doctype html> <!--Jinja-->
+<html lang="pt-br">
+<head>
+    <title>Conteúdo de {{ nome_arquivo }}</title>
+    <style>
+        body { font-family: sans-serif; }
+        pre { background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd; white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <h1>Conteúdo do Arquivo "{{ nome_arquivo }}"</h1>
+    <a href="/">Voltar ao Início</a>
+    <hr>
+    <pre>{{ conteudo }}</pre>
+</body>
+</html>
