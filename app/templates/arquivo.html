@@ -1,0 +1,20 @@
+<!doctype html> <!--Jinja-->
+<html lang="pt-br">
+<head>
+    <title>Conteúdo de {{ nome_arquivo }}</title>
+    <style>
+        body { font-family: sans-serif; }
+        pre { background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd; white-space: pre-wrap; word-wrap: break-word; }
+    </style>
+</head>
+<body>
+    <h1>Conteúdo do Arquivo "{{ nome_arquivo }}"</h1>
+    <a href="/">Voltar ao Início</a>
+    <hr>
+    <pre>{{ conteudo }}</pre>
+</body>
+</html>
+
+<!--O código cria um Visualizador de Arquivos de Texto. Ele lê o texto de um arquivo no servidor,
+injeta esse texto (e o nome do arquivo) na tag <pre> do HTML 
+e aplica um estilo simples para tornar a leitura do conteúdo formatado mais fácil no navegador.-->

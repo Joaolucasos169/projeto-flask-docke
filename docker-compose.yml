@@ -1,9 +1,36 @@
 services:
+  # SERVIÇO DA APLICAÇÃO FLASK
   web:
     build: .
     ports:
-      - "5000:5000" #Mesmo que o -p do docker run
+      - "5000:5000"
     volumes:
       - .:/app
     environment:
-      - WINDOWS_PATH=${PWD}
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/postgres
+    depends_on:
+      db:
+        condition: service_healthy 
+
+  # SERVIÇO DO BANCO DE DADOS POSTGRESQL
+  db:
+    image: postgres:14-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5433:5432"
+    healthcheck: 
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+# Volumes para persistência de dados
+volumes:
+  postgres_data:
