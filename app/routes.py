@@ -3,28 +3,72 @@ import platform
 import psutil
 from flask import render_template, request, jsonify, Blueprint, request as app
 from werkzeug.exceptions import abort
-from . import db  # Importa a instância de SQLAlchemy
-from .models import LogAcesso # Importa o modelo de Log
+from . import db  
+from .models import LogAcesso, SistemaOperacional # Importa o novo modelo
+from sqlalchemy import func
+from sqlalchemy.orm import joinedload # Importa para otimização de busca
 
 bp = Blueprint('main', __name__)
-# --- Funções de Rota ---
+
+# --- FUNÇÃO AUXILIAR PARA OBTER INFORMAÇÕES DO SO ---
+def obter_info_so():
+    """Retorna o nome e a versão do SO do servidor/contêiner."""
+    # Nota: Em um ambiente Docker, isso retorna o SO do contêiner (Linux)
+    return {
+        'nome': platform.system(),
+        'versao': platform.release()
+    }
+
+# --- FUNÇÃO DE REGISTRO MODIFICADA ---
 def registrar_log():
-    """Registra o acesso de qualquer rota no banco de dados."""
-    # Cria uma nova instância do LogAcesso
+    """Registra o acesso de qualquer rota e o SO associado no banco de dados."""
+    
+    # 1. Obter informações do SO
+    info_so = obter_info_so()
+    nome_so_atual = info_so['nome']
+    versao_so_atual = info_so['versao']
+    
+    # 2. Verificar se o SO já existe (Busca no ORM)
+    so_existente = db.session.execute(
+        db.select(SistemaOperacional).filter_by(
+            nome_so=nome_so_atual, 
+            versao_so=versao_so_atual
+        )
+    ).scalar_one_or_none()
+    
+    # 3. Se não existe, cria o novo registro de SO
+    if so_existente is None:
+        novo_so = SistemaOperacional(nome_so=nome_so_atual, versao_so=versao_so_atual)
+        db.session.add(novo_so)
+        # Commit necessário para obter o ID (PK) antes de usá-lo como FK no LogAcesso
+        db.session.commit() 
+        so_id_usar = novo_so.id
+    else:
+        so_id_usar = so_existente.id # Usa o ID do registro existente
+        
+    # 4. Cria e salva o LogAcesso, usando a Chave Estrangeira (FK)
     novo_log = LogAcesso(
         caminho_acessado=request.path,
-        ip_usuario=request.remote_addr # Obtém o IP do usuário/cliente
-)
-    # Adiciona e salva no banco de dados
+        ip_usuario=request.remote_addr,
+        so_id=so_id_usar # SALVA A CHAVE ESTRANGEIRA AQUI
+    )
+    
     db.session.add(novo_log)
     db.session.commit()
 
+# Rota /logs
 @bp.route('/logs')
 def visualizar_logs():
     registrar_log()
+    
+    # Usa joinedload para buscar os dados do SO com uma única query (otimização N+1)
     logs = db.session.execute(
-        db.select(LogAcesso).order_by(LogAcesso.data_acesso.desc())
+        db.select(LogAcesso)
+          .options(joinedload(LogAcesso.sistema_operacional)) 
+          .order_by(LogAcesso.data_acesso.desc())
+          .limit(500)
     ).scalars()
+    
     return render_template('logs.html', logs=logs)
 
 # Rota / (raiz) e /<caminho>
@@ -78,8 +122,6 @@ def listar_conteudo(caminho):
             # Usa 'utf-8' e 'errors='ignore'' para lidar com a maioria dos arquivos de texto
             with open(caminho_absoluto, 'r', encoding='utf-8', errors='ignore') as f:
                 conteudo_lido = f.read()
-                
-            # print(f"Arquivo lido com sucesso. Tamanho: {len(conteudo_lido)} caracteres.") # Linha de DEBUG
             
         except PermissionError:
             return render_template('erro.html', erro=f"Permissão negada para ler o arquivo: {caminho}"), 403
@@ -88,14 +130,19 @@ def listar_conteudo(caminho):
             conteudo_lido = f"ERRO: Não foi possível ler o arquivo. Motivo: {e}"
         
         # 2. Renderiza o template de visualização
-        return render_template('arquivo.html', # Certifique-se que o nome do template está correto (viewer.html ou arquivo.html)
-                               nome_arquivo=os.path.basename(caminho), # Obtém apenas o nome
+        return render_template('arquivo.html', 
+                               nome_arquivo=os.path.basename(caminho), 
                                conteudo=conteudo_lido)
 
 # Rota /info
 @bp.route('/info')
 def info():
-    registrar_log() # REGISTRA O ACESSO
+    registrar_log()
+    
+    # Conta o total de logs usando o ORM (func.count)
+    total_logs = db.session.execute(
+        db.select(func.count(LogAcesso.id))
+    ).scalar_one()
     
     # Obtém a memória total do sistema
     memoria = psutil.virtual_memory()
@@ -104,7 +151,8 @@ def info():
     dados = {
         "os": platform.system(),
         "version": platform.release(),
-        "memory": memoria_total_gb
+        "memory": memoria_total_gb,
+        "total_acessos": total_logs
     }
     return jsonify(dados)
 
@@ -121,3 +169,14 @@ def msg():
             return jsonify({"erro": "JSON inválido. Esperado {'msg': 'texto'}"}), 400
     except Exception:
         return jsonify({"erro": "Requisição precisa ser JSON válido"}), 400
+    
+@bp.route('/sistemas')
+def visualizar_sistemas():
+    registrar_log()
+    
+    sistemas = db.session.execute(
+        db.select(SistemaOperacional)
+          .order_by(SistemaOperacional.nome_so, SistemaOperacional.versao_so)
+    ).scalars()
+    
+    return render_template('sistemas.html', sistemas=sistemas)

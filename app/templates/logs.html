@@ -24,6 +24,7 @@
                 <th>Data e Hora do Acesso</th>
                 <th>Caminho Acessado</th>
                 <th>IP do Usuário</th>
+                <th>SO_ID</th>
             </tr>
         </thead>
         <tbody>
@@ -33,6 +34,7 @@
                 <td>{{ log.data_acesso.strftime('%d/%m/%Y %H:%M:%S') }}</td>
                 <td><a href="{{ log.caminho_acessado }}">{{ log.caminho_acessado }}</a></td>
                 <td>{{ log.ip_usuario }}</td>
+                <td>{{ log.so_id }}</td>
             </tr>
             {% endfor %}
         </tbody>

@@ -1,9 +1,11 @@
 import os  
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 
 # Cria uma instância da classe SQLAlchemy (o banco de dados)
 db = SQLAlchemy()
+migrate = Migrate()
 
 def create_app():
     # Inicializa o Flask
@@ -21,21 +23,16 @@ def create_app():
     DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://postgres:postgres@db:5432/postgres')
     
     app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
-    # Desabilita o aviso do Flask-SQLAlchemy
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Inicializa o SQLAlchemy com o app Flask
     db.init_app(app)
 
+    migrate.init_app(app, db)
     # -------------------------------------------------------------
     # Importa e Registra os Modelos e as Rotas
     # -------------------------------------------------------------
     from .routes import bp
     app.register_blueprint(bp)
     from .models import LogAcesso
-    # Cria as tabelas do banco de dados (dentro do contexto da aplicação)
-    # Isso é feito a primeira vez que a aplicação é executada no contêiner.
-    with app.app_context():
-        db.create_all()
-
     return app

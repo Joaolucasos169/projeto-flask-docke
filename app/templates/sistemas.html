@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <title>Sistemas Operacionais Registrados</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        h1 { color: #333; }
+        table { width: 60%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        a { text-decoration: none; color: #007bff; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <p><a href="/">← Voltar ao Explorador de Arquivos</a></p>
+    <h1>Sistemas Operacionais Registrados</h1>
+
+    {% if sistemas %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Sistema Operacional</th>
+                <th>Versão</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for so in sistemas %}
+            <tr>
+                <td>{{ so.id }}</td>
+                <td>{{ so.nome_so }}</td>
+                <td>{{ so.versao_so }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Nenhum sistema operacional registrado ainda.</p>
+    {% endif %}
+
+</body>
+</html>
