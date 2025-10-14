@@ -38,20 +38,27 @@
   </head>
   <body>
     <h1>Conteúdo de "{{ caminho }}"</h1>
+    
     <div class="breadcrumb">
       <a href="/">Início</a>
       {% for parte in caminho_completo_lista %} /
       <a href="/{{ parte.caminho }}">{{ parte.nome }}</a>
       {% endfor %}
     </div>
+
+    <div id="log-id-data" data-log-id="{{ log_id }}" style="display:none;"></div> 
+
     <a href="/info">Informações do sistema</a><br>
     <a href="/logs">Registro de Acessos (Logs)</a><br>
-    <a href="/sistemas">Sistemas Operacionais Registrados</a><hr />
+    <a href="/sistemas">Sistemas Operacionais (Tabela 1:N)</a>
+    <hr />
+    
     <input
       type="text"
       id="search-bar"
       placeholder="Pesquisar arquivos e pastas..."
     />
+    
     <ul id="file-list">
       {% for item in items %}
       <li class="item">
@@ -67,6 +74,3 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   </body>
 </html>
-
-<!-- O código é um Template Web responsável que combina marcação HTML, 
-estilo CSS e lógica de template de backend para apresentar o conteúdo de uma pasta de forma navegável e pesquisável.-->

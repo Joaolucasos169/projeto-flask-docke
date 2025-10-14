@@ -25,6 +25,7 @@
                 <th>Caminho Acessado</th>
                 <th>IP do Usuário</th>
                 <th>SO_ID</th>
+                <th>informações browser</th>
             </tr>
         </thead>
         <tbody>
@@ -35,6 +36,7 @@
                 <td><a href="{{ log.caminho_acessado }}">{{ log.caminho_acessado }}</a></td>
                 <td>{{ log.ip_usuario }}</td>
                 <td>{{ log.so_id }}</td>
+                <td>{{ log.user_agent }}</td>
             </tr>
             {% endfor %}
         </tbody>
