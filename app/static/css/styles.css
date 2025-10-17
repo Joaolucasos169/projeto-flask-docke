@@ -1,0 +1,96 @@
+body {
+    font-family: sans-serif;
+    margin: 20px; 
+}
+a {
+    text-decoration: none;
+    color: #007bff;
+}
+a:hover {
+    text-decoration: underline;
+}
+h1 {
+    color: #333;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+.icon {
+    font-size: 20px;
+    margin-right: 10px;
+}
+.folder::before {
+    content: "📁";
+}
+.file::before {
+    content: "📄";
+}
+.breadcrumb {
+    margin-bottom: 20px;
+}
+
+/* --- Estilos da Navegação (Menu) --- */
+.nav-container {
+    margin: 20px 0;
+    padding: 10px 0;
+    border-bottom: 1px solid #ccc;
+}
+.nav-container a {
+    display: inline-block;
+    padding: 8px 15px;
+    margin-right: 10px;
+    margin-bottom: 8px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.95em;
+    transition: background-color 0.2s;
+}
+.nav-container a:hover {
+    background-color: #e9ecef;
+    color: #007bff;
+}
+#search-bar {
+    width: 300px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+/* --- Estilos de Logs/Tabelas (logs.html, sistemas.html) --- */
+table {
+    width: 100%; /* Largura total */
+    border-collapse: collapse; /* Remove o espaçamento entre as células */
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ddd; /* Borda cinza clara */
+    padding: 10px; /* Espaçamento interno */
+    text-align: left;
+}
+
+
+th {background-color: #f2f2f2;}
+
+/* Estilo do título, se a cor tiver sumido */
+h1 {
+    color: #333;
+}
+/* --- Estilos da Página de Erro (erro.html) --- */
+.message {
+    font-size: 1.2em;
+}
+
+pre {
+    background-color: #f4f4f4; 
+    padding: 10px; border: 1px solid #ddd; 
+    white-space: pre-wrap; 
+    word-wrap: break-word;
+ }

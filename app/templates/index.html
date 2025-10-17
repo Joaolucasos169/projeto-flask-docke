@@ -2,39 +2,7 @@
 <html lang="pt-br">
   <head>
     <title>Conteúdo de {{ caminho }}</title>
-    <style>
-      body {
-        font-family: sans-serif;
-      }
-      .item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 5px;
-      }
-      .icon {
-        font-size: 20px;
-        margin-right: 10px;
-      }
-      .folder::before {
-        content: "📁";
-      }
-      .file::before {
-        content: "📄";
-      }
-      a {
-        text-decoration: none;
-        color: #007bff;
-      }
-      a:hover {
-        text-decoration: underline;
-      }
-      .breadcrumb {
-        margin-bottom: 20px;
-      }
-      .breadcrumb a {
-        margin-right: 5px;
-      }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   </head>
   <body>
     <h1>Conteúdo de "{{ caminho }}"</h1>
@@ -50,7 +18,8 @@
 
     <a href="/info">Informações do sistema</a><br>
     <a href="/logs">Registro de Acessos (Logs)</a><br>
-    <a href="/sistemas">Sistemas Operacionais (Tabela 1:N)</a>
+    <a href="/sistemas">Sistemas Operacionais (Tabela 1:N)</a><br>
+    <a href="/meu_ip">Dados de acesso (IP)</a>
     <hr />
     
     <input

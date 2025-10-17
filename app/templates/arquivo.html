@@ -2,10 +2,7 @@
 <html lang="pt-br">
 <head>
     <title>Conteúdo de {{ nome_arquivo }}</title>
-    <style>
-        body { font-family: sans-serif; }
-        pre { background-color: #f4f4f4; padding: 10px; border: 1px solid #ddd; white-space: pre-wrap; word-wrap: break-word; }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <h1>Conteúdo do Arquivo "{{ nome_arquivo }}"</h1>
